@@ -157,11 +157,13 @@ public class Mappy {
      * @throws NoSuchVertexException if a city does not exist in the map.
      */
     private void neighbors(String city) throws NoSuchVertexException {
-	// *********************************
-	//
-        // IMPLEMENT ACTIVITY 2 HERE...    
-	//
-	// *********************************
+  ArrayList<String>list = new ArrayList(graph.neighborKeys(city));
+        int i=0;
+      for (Object o : graph.neighborData(city)){
+
+            System.out.println(graph.findEdge(list.get(i)),o);
+          i++;
+      }
     } // neighbors
 
     /**
