@@ -157,13 +157,34 @@ public class Mappy {
      * @throws NoSuchVertexException if a city does not exist in the map.
      */
     private void neighbors(String city) throws NoSuchVertexException {
-  ArrayList<String>list = new ArrayList(graph.neighborKeys(city));
-        int i=0;
-      for (Object o : graph.neighborData(city)){
-
-            System.out.println(graph.findEdge(list.get(i)),o);
-          i++;
-      }
+//@param list will hold the name of the cities which are neighbors of the city
+        ArrayList<String>list = new ArrayList(graph.neighborKeys(city));
+        //@param data will hold the references of the neighbor objects
+        ArrayList<Object> data = new ArrayList(graph.neighborData(city));
+        //@param roads will hold the name of the road
+        ArrayList<String> roads = new ArrayList<String>();
+        //@param roadLength will hold the length of the road
+        ArrayList<Integer> roadLength = new ArrayList<Integer>();
+        //Iterate over the data array and get the edge data
+        for(Object o : data){
+            //typecast the Object type to a City object
+            City c = (City)o;
+            //create empty object which will hold the parameters of the Road cbject
+            Road road = null;
+            //get the right road object
+            road =graph.getEdgeData(city,c.getName());
+            //add the road name to the roads list
+            roads.add(road.getRoad());
+            //add the length of the road to a roadLength list
+            roadLength.add(road.getLength());
+       
+        }
+        System.out.println(city+" has "+list.size()+" neighbors:");
+        int counter=0;
+        for(int i=0;i<list.size();i++){
+            System.out.println(list.get(counter)+" is "+roadLength.get(counter)+" on "+roads.get(counter));
+            counter++;
+        }
     } // neighbors
 
     /**
