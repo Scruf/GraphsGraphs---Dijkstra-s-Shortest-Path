@@ -17,13 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeSet;
+import java.util.TreeMap;
 
 /**
  * The Mappy program reads in city and road information from a file.
  * It then allows the user to enter commands to do things like
  * display all cities / city neighbors / roads, as well
  * as compute and display the shortest path between two cities.
- * 
+ *
  * @author sps (Sean Strout)
  * @author {YOUR_NAME_HERE}
  */
@@ -33,7 +34,7 @@ public class Mappy {
      * All relevant information is stored in a directed graph that
      * stores: city name, city data, road data.
      */
-    private DiGraph<String, City, Road> graph = 
+    private DiGraph<String, City, Road> graph =
         new ArrayDiGraph<String, City, Road>();
 
     /**
@@ -43,13 +44,13 @@ public class Mappy {
      * <br>
      * city neighbor-city distance road<br>
      * ...<br>
-     * 
+     *
      * @param filename the file name that stores the data
      * @throws FileNotFoundException if the file is not found
      * @throws IOException if there is an error reading from the file
      */
     public Mappy(String filename) throws FileNotFoundException, IOException {
-        // read map data in: source destination distance road  
+        // read map data in: source destination distance road
         Scanner input = new Scanner(new File(filename));
 
         while (input.hasNext()) {
@@ -82,19 +83,19 @@ public class Mappy {
         System.out.println("quit - exits the program.");
         System.out.println("roads - displays all road information.");
         System.out.println("travel source dest - " +
-                           "display the shortest path between " +
-                           "source and destination cities");
+                "display the shortest path between " +
+                "source and destination cities");
     } // help
 
     /**
-     * Displays the list of cities, sorted alphabetically using the 
+     * Displays the list of cities, sorted alphabetically using the
      * city name using the following format:<br>
      * <br>
      * Map has {#} cities:<br>
      * {First-city} has {#} road/s<br>
      * {Second-city} has {#} road/s<br>
      * ...<br>
-     * 
+     *
      * @throws NoSuchVertexException if a city does not exist in the map.
      */
     private void cities() throws NoSuchVertexException {
@@ -114,7 +115,7 @@ public class Mappy {
      * {First-road} has {#} mile/s<br>
      * {Second-road} has {#} mile/s<br>
      * ...<br>
-     * 
+     *
      * @throws NoSuchVertexException if a city does not exist in the map.
      */
     private void roads() throws NoSuchVertexException {
@@ -122,7 +123,7 @@ public class Mappy {
         final Map<String, Integer> map = new HashMap<String, Integer>();
         for (Road edge : graph.edgeData()) {
             String road = edge.getRoad();
-            map.put(road, map.get(road) == null ? 
+            map.put(road, map.get(road) == null ?
                     edge.getLength() : map.get(road)+edge.getLength());
         }
 
@@ -152,39 +153,35 @@ public class Mappy {
      * {First-city} is {#} mile/s on {road}<br>
      * {Second-city} is {#} mile/s on {road}<br>
      * ...<br>
-     * 
+     *
      * @param city the city to determine the neighbors for.
      * @throws NoSuchVertexException if a city does not exist in the map.
      */
+
+
     private void neighbors(String city) throws NoSuchVertexException {
-//@param list will hold the name of the cities which are neighbors of the city
-        ArrayList<String>list = new ArrayList(graph.neighborKeys(city));
-        //@param data will hold the references of the neighbor objects
+        // //@param data will hold the references of the neighbor objects
         ArrayList<Object> data = new ArrayList(graph.neighborData(city));
-        //@param roads will hold the name of the road
-        ArrayList<String> roads = new ArrayList<String>();
-        //@param roadLength will hold the length of the road
-        ArrayList<Integer> roadLength = new ArrayList<Integer>();
-        //Iterate over the data array and get the edge data
+      // //@param treeMap will hold the name of the city and a reference to a road object which is associated
+        //with a city it also will store them in alphabetical order
+        Map<String,Road> treeMap =new TreeMap<String,Road>();
         for(Object o : data){
+
             //typecast the Object type to a City object
             City c = (City)o;
             //create empty object which will hold the parameters of the Road cbject
             Road road = null;
-            //get the right road object
-            road =graph.getEdgeData(city,c.getName());
-            //add the road name to the roads list
-            roads.add(road.getRoad());
-            //add the length of the road to a roadLength list
-            roadLength.add(road.getLength());
-       
+            road = graph.getEdgeData(city,c.getName());
+            //put name of the city and the road object into the map
+            treeMap.put(c.getName(),road);
         }
-        System.out.println(city+" has "+list.size()+" neighbors:");
-        int counter=0;
-        for(int i=0;i<list.size();i++){
-            System.out.println(list.get(counter)+" is "+roadLength.get(counter)+" on "+roads.get(counter));
-            counter++;
+        System.out.println(city+" has "+treeMap.size()+" neighbors: ");
+        for(Map.Entry<String,Road> entry : treeMap.entrySet()){
+          String name=entry.getKey();
+          Road r = entry.getValue();
+          System.out.println(name+" is "+r.getLength()+" mile/s on "+r.getRoad());
         }
+      
     } // neighbors
 
     /**
@@ -207,14 +204,19 @@ public class Mappy {
      */
     private void travel(String source, String dest)
                        throws NoSuchVertexException {
-	if(source.equals(dest)
-		System.out.println("You're already there\n"+"You're traveled 0 miles");
+	      if(source.equals(dest))
+          System.out.println("You're already there\n"+"You're traveled 0 miles");
+
+      System.out.println(graph.vertexKeys());
+      DiGraph<String,Integer,String> verticies = new ArrayDiGraph<String,Integer,String>();
+
+
     } // travel
 
     /**
-     * The main loop prompts and waits for user input.  If the command is 
+     * The main loop prompts and waits for user input.  If the command is
      * valid the appopriate helper function is called.  If an error occurs
-     * because an invalid city name was entered, the following is 
+     * because an invalid city name was entered, the following is
      * displayed:<br>
      * <br>
      * Error, a city was not found in the map!<br>
@@ -260,7 +262,7 @@ public class Mappy {
     /**
      * The main routine verifies the command line args, constructts the
      * Mappy object, and executes its main loop.
-     * 
+     *
      * @param args the command line argument should be the name of the file
      *     the holds the city/road information.
      */
