@@ -207,11 +207,8 @@ public class Mappy {
      */
     private void travel(String source, String dest)
                        throws NoSuchVertexException {
-	// ****************************
-	//
-        // IMPLEMENT ACTIVITY 3 HERE...
-	//
-	// ****************************
+	if(source.equals(dest)
+		System.out.println("You're already there\n"+"You're traveled 0 miles");
     } // travel
 
     /**
