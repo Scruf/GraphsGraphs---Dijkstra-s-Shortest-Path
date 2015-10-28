@@ -207,8 +207,21 @@ public class Mappy {
 	      if(source.equals(dest))
           System.out.println("You're already there\n"+"You're traveled 0 miles");
 
-      System.out.println(graph.vertexKeys());
-      DiGraph<String,Integer,String> verticies = new ArrayDiGraph<String,Integer,String>();
+       DiGraph<String, City, Road> verticies = new ArrayDiGraph<String, City, Road>();;
+      verticies=graph;
+      PriorityQueue<City> queue = new PriorityQueue<City>();
+      //Initialize the source vertex data with a cost of 0, and a null predecessor.
+      for(City c : verticies.vertexData()){
+        if(source.equals(c.getName()))
+          c.setCost(0);
+          //Initialize the remaining vertex data with a cost of Integer.MAX_VALUE, and a null predecessor.
+        else
+          c.setCost(Integer.MAX_VALUE);
+        c.setPredecessor(null);
+        queue.add(c);
+      }
+    
+
 
 
     } // travel
