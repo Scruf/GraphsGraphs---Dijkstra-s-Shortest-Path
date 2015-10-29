@@ -207,9 +207,10 @@ public class Mappy {
 	      if(source.equals(dest))
           System.out.println("You're already there\n"+"You're traveled 0 miles");
 
-       DiGraph<String, City, Road> verticies = new ArrayDiGraph<String, City, Road>();;
+        DiGraph<String, City, Road> verticies = new ArrayDiGraph<String, City, Road>();
       verticies=graph;
-      PriorityQueue<City> queue = new PriorityQueue<City>();
+      ArrayList<City> queue = new ArrayList<City>();
+
       //Initialize the source vertex data with a cost of 0, and a null predecessor.
       for(City c : verticies.vertexData()){
         if(source.equals(c.getName()))
@@ -220,6 +221,34 @@ public class Mappy {
         c.setPredecessor(null);
         queue.add(c);
       }
+      ArrayList<City> twat = new ArrayList<City>();
+      do{
+        Collections.sort(queue, new Comparator<City>(){
+          @Override public int compare(City c1, City c2){
+        return c1.getCost()-c2.getCost();
+      }
+    });
+    City min  = queue.remove(0);
+
+    for(City c : verticies.neighborData(min.getName())){
+      Road  road = verticies.getEdgeData(min.getName(),c.getName());
+      if((min.getCost()+road.getLength())<c.getCost())
+      {
+        int neighborCost = min.getCost()+road.getLength();
+        c.setCost(neighborCost);
+        String  neighborPredecssor = min.getName();
+        c.setPredecessor(neighborPredecssor);
+          twat.add(c);
+      }
+
+    }
+
+  }while(!queue.isEmpty());
+
+
+  for(City c : twat){
+    System.out.println(c.getPredecessor()+"-"+c.getName()+" "+c.getCost());
+  }
     
 
 
